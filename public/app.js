@@ -1,5 +1,5 @@
 var a = [];
-var b = [];
+var listaVazia = [];
 var c = 1;
 var d = 20;
 var e = '';
@@ -93,35 +93,35 @@ async function lbt() {
 }
 
 function UNIFOR() {
-    var g = document.getElementById('pokemonGrid');
-    g.innerHTML = '';
+    var matrispokemon = document.getElementById('pokemonGrid');
+    matrispokemon.innerHTML = '';
 
-    var fil = b;
-    if(e !== '') {
-        fil = fil.filter(p => {
-            return p.name.toLowerCase().includes(e.toLowerCase()) ||
-                   p.id.toString().includes(e);
+    var listapokemon = listaVazia;
+    if(filtro !== '') {
+        listapokemon = listapokemon.filter(pokemon => {
+            return pokemon.name.toLowerCase().includes(filtro.toLowerCase()) ||
+                   pokemon.id.toString().includes(filtro);
         });
     }
 
-    for(var i = 0; i < fil.length; i++) {
-        var p = fil[i];
-        var fdp = document.createElement('div');
-        fdp.className = 'col-md-3';
+    for(var i = 0; i < listapokemon.length; i++) {
+        var pokemon = listapokemon[i];
+        var forDivPokemonn = document.createElement('div');
+        forDivPokemonn.className = 'col-md-3';
         
-        var html = '<div class="c" onclick="showDetails(' + p.id + ')">';
-        html = html + '<img src="' + p.sprites.front_default + '" class="i" alt="' + p.name + '">';
-        html = html + '<h5 class="text-center">#' + p.id + ' ' + p.name.charAt(0).toUpperCase() + p.name.slice(1) + '</h5>';
+        var html = '<div class="c" onclick="showDetails(' + pokemon.id + ')">';
+        html = html + '<img src="' + pokemon.sprites.front_default + '" class="i" alt="' + pokemon.name + '">';
+        html = html + '<h5 class="text-center">#' + pokemon.id + ' ' + pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1) + '</h5>';
         html = html + '<div class="text-center">';
         
-        for(var j = 0; j < p.types.length; j++) {
-            var typeName = p.types[j].type.name;
+        for(var j = 0; j < pokemon.types.length; j++) {
+            var typeName = pokemon.types[j].type.name;
             html = html + '<span class="badge type-' + typeName + '">' + typeName + '</span> ';
         }
         
         html = html + '</div></div>';
-        fdp.innerHTML = html;
-        g.appendChild(fdp);
+        forDivPokemonn.innerHTML = html;
+        matrispokemon.appendChild(forDivPokemonn);
     }
     
     document.getElementById('loading').style.display = 'none';
