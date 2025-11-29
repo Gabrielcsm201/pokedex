@@ -1,9 +1,9 @@
 var a = [];
-var listaVazia = [];
-var c = 1;
+var listaVazia = []; // b
+var paginaAtual = 1; // c
 var d = 20;
 var e = '';
-var f1 = '';
+var filtroTipo = '';  // f1
 var g = null;
 
 const API = 'https://pokeapi.co/api/v2/pokemon';
@@ -127,14 +127,14 @@ function UNIFOR() {
     document.getElementById('loading').style.display = 'none';
     document.getElementById('pokemonGrid').style.display = 'flex';
 
-    if(f1 !== '') {
-        document.getElementById('pageInfo').textContent = 'Mostrando ' + fil.length + ' pokémons';
+    if(filtroTipo !== '') {
+        document.getElementById('pageInfo').textContent = 'Mostrando ' + listapokemon.length + ' pokémons';
     } else {
-        document.getElementById('pageInfo').textContent = 'Página ' + c;
+        document.getElementById('pageInfo').textContent = 'Página ' + paginaAtual;
     }
 
-    document.getElementById('prevBtn').disabled = c === 1 || f1 !== '';
-    document.getElementById('nextBtn').disabled = f1 !== '';
+    document.getElementById('prevBtn').disabled = paginaAtual === 1 || filtroTipo !== '';
+    document.getElementById('nextBtn').disabled = filtroTipo !== '';
 }
 
 async function f() {
