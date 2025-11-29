@@ -41,15 +41,15 @@ async function l() {
         var resposta = await fetch(urlMontada);
         var jsonResposta = await resposta.json();
         
-        var pro = [];
+        var requisicaoPokemon = [];
         for(var loop = 0; loop < jsonResposta.results.length; loop++) {
-            pro.push(fetch(jsonResposta.results[loop].url));
+            requisicaoPokemon.push(fetch(jsonResposta.results[loop].url));
         }
         
-        var requisicao = await Promise.all(pro);
+        var listaRequisicao = await Promise.all(requisicaoPokemon);
         listaPokemonAPI = [];
-        for(var loop = 0; loop < requisicao.length; loop++) {
-            var pokemon = await requisicao[loop].json();
+        for(var loop = 0; loop < listaRequisicao.length; loop++) {
+            var pokemon = await listaRequisicao[loop].json();
             listaPokemonAPI.push(pokemon);
         }
         
@@ -70,17 +70,17 @@ async function lbt() {
         var resposta = await fetch(urlMontada);
         var jsonResposta = await resposta.json();
 
-        var listaPokemonTipo = [];
+        var requisicaoPokemon = [];
         var li = jsonResposta.pokemon.length > 100 ? 100 : jsonResposta.pokemon.length; // Limita a 100
-        for(var i = 0; i < li; i++) {
-            listaPokemonTipo.push(fetch(jsonResposta.pokemon[i].pokemon.url));
+        for(var loop = 0; loop < li; loop++) {
+            requisicaoPokemon.push(fetch(jsonResposta.pokemon[loop].pokemon.url));
         }
 
-        var listaPromise = await Promise.all(listaPokemonTipo);
+        var listaRequisicao = await Promise.all(requisicaoPokemon);
         listaPokemonAPI = [];
-        for(var i = 0; i < listaPromise.length; i++) {
-            var p = await listaPromise[i].json();
-            listaPokemonAPI.push(p);
+        for(var loop = 0; loop < listaRequisicao.length; loop++) {
+            var pokemon = await listaRequisicao[loop].json();
+            listaPokemonAPI.push(pokemon);
         }
 
         listaVazia = [...listaPokemonAPI];
@@ -103,8 +103,8 @@ function UNIFOR() {
         });
     }
 
-    for(var i = 0; i < listapokemon.length; i++) {
-        var pokemon = listapokemon[i];
+    for(var loop = 0; loop < listapokemon.length; loop++) {
+        var pokemon = listapokemon[loop];
         var forDivPokemonn = document.createElement('div');
         forDivPokemonn.className = 'col-md-3';
         
@@ -113,8 +113,8 @@ function UNIFOR() {
         html = html + '<h5 class="text-center">#' + pokemon.id + ' ' + pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1) + '</h5>';
         html = html + '<div class="text-center">';
         
-        for(var j = 0; j < pokemon.types.length; j++) {
-            var typeName = pokemon.types[j].type.name;
+        for(var loop2 = 0; loop2 < pokemon.types.length; loop2++) {
+            var typeName = pokemon.types[loop2].type.name;
             html = html + '<span class="badge type-' + typeName + '">' + typeName + '</span> ';
         }
         
@@ -183,60 +183,60 @@ function x() {
 
 async function showDetails(id) {
     try {
-        var xpto = await fetch(API + '/' + id);
-        var p = await xpto.json();
+        var resposta = await fetch(API + '/' + id);
+        var jsonResposta = await resposta.json();
         
-        var zyz = await fetch(p.species.url);
-        var m = await zyz.json();
+        var respostaEspecie = await fetch(jsonResposta.species.url);
+        var jsonEspecie = await respostaEspecie.json();
         
-        var desc = '';
-        for(var i = 0; i < m.flavor_text_entries.length; i++) {
-            if(m.flavor_text_entries[i].language.name === 'en') {
-                desc = m.flavor_text_entries[i].flavor_text;
+        var descricao = '';
+        for(var loop = 0; loop < jsonEspecie.flavor_text_entries.length; loop++) {
+            if(jsonEspecie.flavor_text_entries[loop].language.name === 'en') {
+                descricao = jsonEspecie.flavor_text_entries[loop].flavor_text;
                 break;
             }
         }
         
-        document.getElementById('modalTitle').textContent = '#' + p.id + ' ' + p.name.charAt(0).toUpperCase() + p.name.slice(1);
+        document.getElementById('modalTitle').textContent = '#' + jsonResposta.id + ' ' + jsonResposta.name.charAt(0).toUpperCase() + jsonResposta.name.slice(1);
         
-        var ph = '<div class="row"><div class="col-md-6">';
-        ph += '<div class="sprite-container">';
-        ph += '<div><img src="' + p.sprites.front_default + '" alt="front"><p class="text-center">Normal</p></div>';
-        ph += '<div><img src="' + p.sprites.front_shiny + '" alt="shiny"><p class="text-center">Shiny</p></div>';
-        ph += '</div>';
+        var html = '<div class="row"><div class="col-md-6">';
+        html += '<div class="sprite-container">';
+        html += '<div><img src="' + jsonResposta.sprites.front_default + '" alt="front"><p class="text-center">Normal</p></div>';
+        html += '<div><img src="' + jsonResposta.sprites.front_shiny + '" alt="shiny"><p class="text-center">Shiny</p></div>';
+        html += '</div>';
         
-        ph += '<p><strong>Tipo:</strong> ';
-        for(var i = 0; i < p.types.length; i++) {
-            ph += '<span class="badge type-' + p.types[i].type.name + '">' + p.types[i].type.name + '</span> ';
+        html += '<p><strong>Tipo:</strong> ';
+        for(var loop = 0; loop < jsonResposta.types.length; loop++) {
+            html += '<span class="badge type-' + jsonResposta.types[loop].type.name + '">' + jsonResposta.types[loop].type.name + '</span> ';
         }
-        ph += '</p>';
+        html += '</p>';
         
-        ph += '<p><strong>Altura:</strong> ' + (p.height / 10) + ' m</p>';
-        ph += '<p><strong>Peso:</strong> ' + (p.weight / 10) + ' kg</p>';
+        html += '<p><strong>Altura:</strong> ' + (jsonResposta.height / 10) + ' m</p>';
+        html += '<p><strong>Peso:</strong> ' + (jsonResposta.weight / 10) + ' kg</p>';
         
-        ph += '<p><strong>Habilidades:</strong> ';
-        for(var i = 0; i < p.abilities.length; i++) {
-            ph += p.abilities[i].ability.name;
-            if(i < p.abilities.length - 1) ph += ', ';
+        html += '<p><strong>Habilidades:</strong> ';
+        for(var loop = 0; loop < jsonResposta.abilities.length; loop++) {
+            html += jsonResposta.abilities[loop].ability.name;
+            if(loop < jsonResposta.abilities.length - 1) html += ', ';
         }
-        ph += '</p>';
+        html += '</p>';
         
-        ph += '</div><div class="col-md-6">';
+        html += '</div><div class="col-md-6">';
         
-        ph += '<p><strong>Descrição:</strong></p>';
-        ph += '<p>' + desc.replace(/\f/g, ' ') + '</p>';
+        html += '<p><strong>Descrição:</strong></p>';
+        html += '<p>' + descricao.replace(/\f/g, ' ') + '</p>';
         
-        ph += '<h6>Estatísticas:</h6>';
-        for(var i = 0; i < p.stats.length; i++) {
-            var stat = p.stats[i];
-            var percentage = (stat.base_stat / 255) * 100;
-            ph += '<div><small>' + stat.stat.name + ': ' + stat.base_stat + '</small>';
-            ph += '<div class="stat-bar"><div class="stat-fill" style="width: ' + percentage + '%"></div></div></div>';
+        html += '<h6>Estatísticas:</h6>';
+        for(var loop = 0; loop < jsonResposta.stats.length; loop++) {
+            var statusPokemon = jsonResposta.stats[loop];
+            var percentage = (statusPokemon.base_stat / 255) * 100;
+            html += '<div><small>' + statusPokemon.stat.name + ': ' + statusPokemon.base_stat + '</small>';
+            html += '<div class="stat-bar"><div class="stat-fill" style="width: ' + percentage + '%"></div></div></div>';
         }
         
-        ph += '</div></div>';
+        html += '</div></div>';
         
-        document.getElementById('modalBody').innerHTML = ph;
+        document.getElementById('modalBody').innerHTML = html;
         
         var mod = new bootstrap.Modal(document.getElementById('m'));
         mod.show();
