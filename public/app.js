@@ -1,31 +1,30 @@
-var a = [];
-var b = [];
-var c = 1;
-var d = 20;
-var e = '';
-var f1 = '';
-var g = null;
+var listaPokemonAPI = []; //a
+var listaVazia = []; // b
+var paginaAtual = 1; // c
+var pokemonPorPagina = 20; //d 
+var filtroNome = ''; // e
+var filtroTipo = '';  // f1
 
 const API = 'https://pokeapi.co/api/v2/pokemon';
 const API2 = 'https://pokeapi.co/api/v2/type';
 
 async function i() {
     document.getElementById('loading').innerHTML = '';
-    for(var i = 0; i < 20; i++) {
+    for(var loop = 0; loop < 20; loop++) {
         document.getElementById('loading').innerHTML += '<div class="col-md-3"><div class="skeleton"></div></div>';
     }
     
     try {
-        var r = await fetch(API2);
-        var dt = await r.json();
-        var sel = document.getElementById('typeFilter');
-        for(var i = 0; i < dt.results.length; i++) {
-            var opt = document.createElement('option');
-            opt.value = dt.results[i].name;
-            opt.textContent = dt.results[i].name.charAt(0).toUpperCase() + dt.results[i].name.slice(1);
-            sel.appendChild(opt);
+        var requisicao = await fetch(API2);
+        var requisicaoJson = await requisicao.json();
+        var filtro = document.getElementById('typeFilter');
+        for(var loop = 0; loop < requisicaoJson.results.length; loop++) {
+            var option = document.createElement('option');
+            option.value = requisicaoJson.results[loop].name;
+            option.textContent = requisicaoJson.results[loop].name.charAt(0).toUpperCase() + requisicaoJson.results[loop].name.slice(1);
+            filtro.appendChild(option);
         }
-    } catch(err) {
+    } catch(erro) {
         console.log('erro');
     }
     
@@ -37,26 +36,26 @@ async function l() {
     document.getElementById('pokemonGrid').style.display = 'none';
     
     try {
-        var off = (c - 1) * d;
-        var ur = API + '?limit=' + d + '&offset=' + off;
-        var r = await fetch(ur);
-        var dt = await r.json();
+        var pularElementos = (paginaAtual - 1) * pokemonPorPagina;
+        var urlMontada = API + '?limit=' + pokemonPorPagina + '&offset=' + pularElementos;
+        var resposta = await fetch(urlMontada);
+        var jsonResposta = await resposta.json();
         
-        var pro = [];
-        for(var i = 0; i < dt.results.length; i++) {
-            pro.push(fetch(dt.results[i].url));
+        var requisicaoPokemon = [];
+        for(var loop = 0; loop < jsonResposta.results.length; loop++) {
+            requisicaoPokemon.push(fetch(jsonResposta.results[loop].url));
         }
         
-        var r = await Promise.all(pro);
-        a = [];
-        for(var i = 0; i < r.length; i++) {
-            var pokemon = await r[i].json();
-            a.push(pokemon);
+        var listaRequisicao = await Promise.all(requisicaoPokemon);
+        listaPokemonAPI = [];
+        for(var loop = 0; loop < listaRequisicao.length; loop++) {
+            var pokemon = await listaRequisicao[loop].json();
+            listaPokemonAPI.push(pokemon);
         }
         
-        b = [...a];
+        listaVazia = [...listaPokemonAPI];
         UNIFOR();
-    } catch(error) {
+    } catch(erro) {
         console.log('erro ao carregar');
         alert('Erro ao carregar Pokémons!');
     }
@@ -67,24 +66,24 @@ async function lbt() {
     document.getElementById('pokemonGrid').style.display = 'none';
 
     try {
-        var ur = API2 + '/' + f1;
-        var r = await fetch(ur);
-        var dt = await r.json();
+        var urlMontada = API2 + '/' + filtroTipo;
+        var resposta = await fetch(urlMontada);
+        var jsonResposta = await resposta.json();
 
-        var pr = [];
-        var li = dt.pokemon.length > 100 ? 100 : dt.pokemon.length; // Limita a 100
-        for(var i = 0; i < li; i++) {
-            pr.push(fetch(dt.pokemon[i].pokemon.url));
+        var requisicaoPokemon = [];
+        var li = jsonResposta.pokemon.length > 100 ? 100 : jsonResposta.pokemon.length; // Limita a 100
+        for(var loop = 0; loop < li; loop++) {
+            requisicaoPokemon.push(fetch(jsonResposta.pokemon[loop].pokemon.url));
         }
 
-        var rps = await Promise.all(pr);
-        a = [];
-        for(var i = 0; i < rps.length; i++) {
-            var p = await rps[i].json();
-            a.push(p);
+        var listaRequisicao = await Promise.all(requisicaoPokemon);
+        listaPokemonAPI = [];
+        for(var loop = 0; loop < listaRequisicao.length; loop++) {
+            var pokemon = await listaRequisicao[loop].json();
+            listaPokemonAPI.push(pokemon);
         }
 
-        b = [...a];
+        listaVazia = [...listaPokemonAPI];
         UNIFOR();
     } catch(error) {
         console.log('erro ao carregar tipo');
@@ -93,56 +92,56 @@ async function lbt() {
 }
 
 function UNIFOR() {
-    var g = document.getElementById('pokemonGrid');
-    g.innerHTML = '';
+    var matrispokemon = document.getElementById('pokemonGrid');
+    matrispokemon.innerHTML = '';
 
-    var fil = b;
-    if(e !== '') {
-        fil = fil.filter(p => {
-            return p.name.toLowerCase().includes(e.toLowerCase()) ||
-                   p.id.toString().includes(e);
+    var listapokemon = listaVazia;
+    if(filtroNome !== '') {
+        listapokemon = listapokemon.filter(pokemon => {
+            return pokemon.name.toLowerCase().includes(filtroNome.toLowerCase()) ||
+                   pokemon.id.toString().includes(filtroNome);
         });
     }
 
-    for(var i = 0; i < fil.length; i++) {
-        var p = fil[i];
-        var fdp = document.createElement('div');
-        fdp.className = 'col-md-3';
+    for(var loop = 0; loop < listapokemon.length; loop++) {
+        var pokemon = listapokemon[loop];
+        var forDivPokemonn = document.createElement('div');
+        forDivPokemonn.className = 'col-md-3';
         
-        var html = '<div class="c" onclick="showDetails(' + p.id + ')">';
-        html = html + '<img src="' + p.sprites.front_default + '" class="i" alt="' + p.name + '">';
-        html = html + '<h5 class="text-center">#' + p.id + ' ' + p.name.charAt(0).toUpperCase() + p.name.slice(1) + '</h5>';
+        var html = '<div class="c" onclick="showDetails(' + pokemon.id + ')">';
+        html = html + '<img src="' + pokemon.sprites.front_default + '" class="i" alt="' + pokemon.name + '">';
+        html = html + '<h5 class="text-center">#' + pokemon.id + ' ' + pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1) + '</h5>';
         html = html + '<div class="text-center">';
         
-        for(var j = 0; j < p.types.length; j++) {
-            var typeName = p.types[j].type.name;
+        for(var loop2 = 0; loop2 < pokemon.types.length; loop2++) {
+            var typeName = pokemon.types[loop2].type.name;
             html = html + '<span class="badge type-' + typeName + '">' + typeName + '</span> ';
         }
         
         html = html + '</div></div>';
-        fdp.innerHTML = html;
-        g.appendChild(fdp);
+        forDivPokemonn.innerHTML = html;
+        matrispokemon.appendChild(forDivPokemonn);
     }
     
     document.getElementById('loading').style.display = 'none';
     document.getElementById('pokemonGrid').style.display = 'flex';
 
-    if(f1 !== '') {
-        document.getElementById('pageInfo').textContent = 'Mostrando ' + fil.length + ' pokémons';
+    if(filtroTipo !== '') {
+        document.getElementById('pageInfo').textContent = 'Mostrando ' + listapokemon.length + ' pokémons';
     } else {
-        document.getElementById('pageInfo').textContent = 'Página ' + c;
+        document.getElementById('pageInfo').textContent = 'Página ' + paginaAtual;
     }
 
-    document.getElementById('prevBtn').disabled = c === 1 || f1 !== '';
-    document.getElementById('nextBtn').disabled = f1 !== '';
+    document.getElementById('prevBtn').disabled = paginaAtual === 1 || filtroTipo !== '';
+    document.getElementById('nextBtn').disabled = filtroTipo !== '';
 }
 
 async function f() {
-    e = document.getElementById('s').value;
-    f1 = document.getElementById('typeFilter').value;
+    filtroNome = document.getElementById('s').value;
+    filtroTipo = document.getElementById('typeFilter').value;
 
     // Se tem filtro de tipo, busca pokémons daquele tipo
-    if(f1 !== '') {
+    if(filtroTipo !== '') {
         await lbt();
     } else {
         UNIFOR();
@@ -152,16 +151,16 @@ async function f() {
 function r() {
     document.getElementById('s').value = '';
     document.getElementById('typeFilter').value = '';
-    e = '';
-    f1 = '';
-    c = 1;
+    filtroNome = '';
+    filtroTipo = '';
+    paginaAtual = 1;
     l();
 }
 
 function p1() {
-    if(c > 1) {
-        c--;
-        if(f1 !== '') {
+    if(paginaAtual > 1) {
+        paginaAtual--;
+        if(filtroTipo !== '') {
             UNIFOR();
         } else {
             l();
@@ -170,8 +169,8 @@ function p1() {
 }
 
 function p2() {
-    c++;
-    if(f1 !== '') {
+    paginaAtual++;
+    if(filtroTipo !== '') {
         UNIFOR();
     } else {
         l();
@@ -182,62 +181,62 @@ function x() {
     document.body.classList.toggle('dark');
 }
 
-async function Minhe_nha(id) {
+async function showDetails(id) {
     try {
-        var xpto = await fetch(API + '/' + id);
-        var p = await xpto.json();
+        var resposta = await fetch(API + '/' + id);
+        var jsonResposta = await resposta.json();
         
-        var zyz = await fetch(p.species.url);
-        var m = await zyz.json();
+        var respostaEspecie = await fetch(jsonResposta.species.url);
+        var jsonEspecie = await respostaEspecie.json();
         
-        var desc = '';
-        for(var i = 0; i < m.flavor_text_entries.length; i++) {
-            if(m.flavor_text_entries[i].language.name === 'en') {
-                desc = m.flavor_text_entries[i].flavor_text;
+        var descricao = '';
+        for(var loop = 0; loop < jsonEspecie.flavor_text_entries.length; loop++) {
+            if(jsonEspecie.flavor_text_entries[loop].language.name === 'en') {
+                descricao = jsonEspecie.flavor_text_entries[loop].flavor_text;
                 break;
             }
         }
         
-        document.getElementById('modalTitle').textContent = '#' + p.id + ' ' + p.name.charAt(0).toUpperCase() + p.name.slice(1);
+        document.getElementById('modalTitle').textContent = '#' + jsonResposta.id + ' ' + jsonResposta.name.charAt(0).toUpperCase() + jsonResposta.name.slice(1);
         
-        var ph = '<div class="row"><div class="col-md-6">';
-        ph += '<div class="sprite-container">';
-        ph += '<div><img src="' + p.sprites.front_default + '" alt="front"><p class="text-center">Normal</p></div>';
-        ph += '<div><img src="' + p.sprites.front_shiny + '" alt="shiny"><p class="text-center">Shiny</p></div>';
-        ph += '</div>';
+        var html = '<div class="row"><div class="col-md-6">';
+        html += '<div class="sprite-container">';
+        html += '<div><img src="' + jsonResposta.sprites.front_default + '" alt="front"><p class="text-center">Normal</p></div>';
+        html += '<div><img src="' + jsonResposta.sprites.front_shiny + '" alt="shiny"><p class="text-center">Shiny</p></div>';
+        html += '</div>';
         
-        ph += '<p><strong>Tipo:</strong> ';
-        for(var i = 0; i < p.types.length; i++) {
-            ph += '<span class="badge type-' + p.types[i].type.name + '">' + p.types[i].type.name + '</span> ';
+        html += '<p><strong>Tipo:</strong> ';
+        for(var loop = 0; loop < jsonResposta.types.length; loop++) {
+            html += '<span class="badge type-' + jsonResposta.types[loop].type.name + '">' + jsonResposta.types[loop].type.name + '</span> ';
         }
-        ph += '</p>';
+        html += '</p>';
         
-        ph += '<p><strong>Altura:</strong> ' + (p.height / 10) + ' m</p>';
-        ph += '<p><strong>Peso:</strong> ' + (p.weight / 10) + ' kg</p>';
+        html += '<p><strong>Altura:</strong> ' + (jsonResposta.height / 10) + ' m</p>';
+        html += '<p><strong>Peso:</strong> ' + (jsonResposta.weight / 10) + ' kg</p>';
         
-        ph += '<p><strong>Habilidades:</strong> ';
-        for(var i = 0; i < p.abilities.length; i++) {
-            ph += p.abilities[i].ability.name;
-            if(i < p.abilities.length - 1) ph += ', ';
+        html += '<p><strong>Habilidades:</strong> ';
+        for(var loop = 0; loop < jsonResposta.abilities.length; loop++) {
+            html += jsonResposta.abilities[loop].ability.name;
+            if(loop < jsonResposta.abilities.length - 1) html += ', ';
         }
-        ph += '</p>';
+        html += '</p>';
         
-        ph += '</div><div class="col-md-6">';
+        html += '</div><div class="col-md-6">';
         
-        ph += '<p><strong>Descrição:</strong></p>';
-        ph += '<p>' + desc.replace(/\f/g, ' ') + '</p>';
+        html += '<p><strong>Descrição:</strong></p>';
+        html += '<p>' + descricao.replace(/\f/g, ' ') + '</p>';
         
-        ph += '<h6>Estatísticas:</h6>';
-        for(var i = 0; i < p.stats.length; i++) {
-            var stat = p.stats[i];
-            var percentage = (stat.base_stat / 255) * 100;
-            ph += '<div><small>' + stat.stat.name + ': ' + stat.base_stat + '</small>';
-            ph += '<div class="stat-bar"><div class="stat-fill" style="width: ' + percentage + '%"></div></div></div>';
+        html += '<h6>Estatísticas:</h6>';
+        for(var loop = 0; loop < jsonResposta.stats.length; loop++) {
+            var statusPokemon = jsonResposta.stats[loop];
+            var percentage = (statusPokemon.base_stat / 255) * 100;
+            html += '<div><small>' + statusPokemon.stat.name + ': ' + statusPokemon.base_stat + '</small>';
+            html += '<div class="stat-bar"><div class="stat-fill" style="width: ' + percentage + '%"></div></div></div>';
         }
         
-        ph += '</div></div>';
+        html += '</div></div>';
         
-        document.getElementById('modalBody').innerHTML = ph;
+        document.getElementById('modalBody').innerHTML = html;
         
         var mod = new bootstrap.Modal(document.getElementById('m'));
         mod.show();
@@ -247,14 +246,6 @@ async function Minhe_nha(id) {
         alert('Erro ao carregar detalhes!');
     }
 }
-
-function mor() {
-    var x = 10;
-    var y = 20;
-    return x + y;
-}
-
-var gmord = 'teste miqueias';
 
 window.onload = function() {
     i();
