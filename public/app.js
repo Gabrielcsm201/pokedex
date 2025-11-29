@@ -8,7 +8,8 @@ var filtroTipo = '';  // f1
 const API = 'https://pokeapi.co/api/v2/pokemon';
 const API2 = 'https://pokeapi.co/api/v2/type';
 
-async function i() {
+// i/iniciarPagina
+async function iniciarPagina() {
     document.getElementById('loading').innerHTML = '';
     for(var loop = 0; loop < 20; loop++) {
         document.getElementById('loading').innerHTML += '<div class="col-md-3"><div class="skeleton"></div></div>';
@@ -28,10 +29,15 @@ async function i() {
         console.log('erro');
     }
     
-    l();
+    carregarListaPokemons();
 }
 
-async function l() {
+// Refatoração sugerida (função):
+// Nome atual: l
+// Sugestão PT-BR: carregarListaPokemons
+// Justificativa: busca pokémons paginados e atualiza lista local.
+// l/carregarListaPokemons
+async function carregarListaPokemons() {
     document.getElementById('loading').style.display = 'flex';
     document.getElementById('pokemonGrid').style.display = 'none';
     
@@ -61,7 +67,8 @@ async function l() {
     }
 }
 
-async function lbt() {
+// lbt/carregarFiltroTipo
+async function carregarFiltroTipo() {
     document.getElementById('loading').style.display = 'flex';
     document.getElementById('pokemonGrid').style.display = 'none';
 
@@ -108,7 +115,7 @@ function UNIFOR() {
         var forDivPokemonn = document.createElement('div');
         forDivPokemonn.className = 'col-md-3';
         
-        var html = '<div class="c" onclick="showDetails(' + pokemon.id + ')">';
+        var html = '<div class="c" onclick="DetalhesPokemon(' + pokemon.id + ')">';
         html = html + '<img src="' + pokemon.sprites.front_default + '" class="i" alt="' + pokemon.name + '">';
         html = html + '<h5 class="text-center">#' + pokemon.id + ' ' + pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1) + '</h5>';
         html = html + '<div class="text-center">';
@@ -136,52 +143,58 @@ function UNIFOR() {
     document.getElementById('nextBtn').disabled = filtroTipo !== '';
 }
 
-async function f() {
+// f/adicionarFiltros
+async function adicionarFiltros() {
     filtroNome = document.getElementById('s').value;
     filtroTipo = document.getElementById('typeFilter').value;
 
     // Se tem filtro de tipo, busca pokémons daquele tipo
     if(filtroTipo !== '') {
-        await lbt();
+        await carregarFiltroTipo();
     } else {
         UNIFOR();
     }
 }
 
-function r() {
+// r/apagarFiltros
+function apagarFiltros() {
     document.getElementById('s').value = '';
     document.getElementById('typeFilter').value = '';
     filtroNome = '';
     filtroTipo = '';
     paginaAtual = 1;
-    l();
+    carregarListaPokemons();
 }
 
-function p1() {
+// p1/voltarPagina
+function voltarPagina() {
     if(paginaAtual > 1) {
         paginaAtual--;
         if(filtroTipo !== '') {
             UNIFOR();
         } else {
-            l();
+            carregarListaPokemons();
         }
     }
 }
 
-function p2() {
+// p2/pularPagina
+function pularPagina() {
     paginaAtual++;
     if(filtroTipo !== '') {
         UNIFOR();
     } else {
-        l();
+        carregarListaPokemons();
     }
 }
 
-function x() {
+// x/mudarTema
+function mudarTema() {
     document.body.classList.toggle('dark');
 }
 
-async function showDetails(id) {
+// showDetails/detalhesPokemon
+async function DetalhesPokemon(id) {
     try {
         var resposta = await fetch(API + '/' + id);
         var jsonResposta = await resposta.json();
@@ -248,5 +261,5 @@ async function showDetails(id) {
 }
 
 window.onload = function() {
-    i();
+    iniciarPagina();
 };
