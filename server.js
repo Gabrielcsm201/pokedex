@@ -2,18 +2,20 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-const p = 3000;
+// p/porta
+const porta = 3000;
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-function doStuff(req, res) {
+// doStuff/ativarPaginaInicial
+function ativarPaginaInicial(req, res) {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));    
     console.log('x');
 }
 
-app.get('/', doStuff);
+app.get('/', ativarPaginaInicial);
 
-app.listen(p, () => {
+app.listen(porta, () => {
     var msg = 'Server';
     msg = msg + ' ';
     msg = msg + 'running';
@@ -22,7 +24,7 @@ app.listen(p, () => {
     msg = msg + ' ';
     msg = msg + 'port';
     msg = msg + ' ';
-    msg = msg + p;
+    msg = msg + porta;
     console.log(msg);
     
     var unused = 'this is never used';
@@ -30,7 +32,8 @@ app.listen(p, () => {
     var y = 20;
 });
 
-function f1() {
+// f1/verificacao
+function verificacao() {
     return true;
 }
 
