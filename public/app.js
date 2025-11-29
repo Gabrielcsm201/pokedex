@@ -32,10 +32,6 @@ async function iniciarPagina() {
     carregarListaPokemons();
 }
 
-// Refatoração sugerida (função):
-// Nome atual: l
-// Sugestão PT-BR: carregarListaPokemons
-// Justificativa: busca pokémons paginados e atualiza lista local.
 // l/carregarListaPokemons
 async function carregarListaPokemons() {
     document.getElementById('loading').style.display = 'flex';
