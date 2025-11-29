@@ -189,72 +189,108 @@ function mudarTema() {
     document.body.classList.toggle('dark');
 }
 
-// showDetails/detalhesPokemon
+// showDetails / DetalhesPokemon
 async function DetalhesPokemon(id) {
     try {
-        var resposta = await fetch(API + '/' + id);
-        var jsonResposta = await resposta.json();
-        
-        var respostaEspecie = await fetch(jsonResposta.species.url);
-        var jsonEspecie = await respostaEspecie.json();
-        
+        // --- BUSCA PRINCIPAL ---
+        var respostaPokemon = await fetch(API + '/' + id);
+        var pokemonJson = await respostaPokemon.json();
+
+        // --- BUSCA DA ESPÉCIE (PARA PEGAR DESCRIÇÃO) ---
+        var respostaSpecies = await fetch(pokemonJson.species.url);
+        var speciesJson = await respostaSpecies.json();
+
+        // --- DESCRIÇÃO EM INGLÊS ---
         var descricao = '';
-        for(var loop = 0; loop < jsonEspecie.flavor_text_entries.length; loop++) {
-            if(jsonEspecie.flavor_text_entries[loop].language.name === 'en') {
-                descricao = jsonEspecie.flavor_text_entries[loop].flavor_text;
+        for (var i = 0; i < speciesJson.flavor_text_entries.length; i++) {
+            var entry = speciesJson.flavor_text_entries[i];
+            if (entry.language.name === 'en') {
+                descricao = entry.flavor_text;
                 break;
             }
         }
-        
-        document.getElementById('modalTitle').textContent = '#' + jsonResposta.id + ' ' + jsonResposta.name.charAt(0).toUpperCase() + jsonResposta.name.slice(1);
-        
-        var html = '<div class="row"><div class="col-md-6">';
+
+        // --- TÍTULO DO MODAL ---
+        document.getElementById('modalTitle').textContent =
+            '#' + pokemonJson.id + ' ' +
+            pokemonJson.name.charAt(0).toUpperCase() +
+            pokemonJson.name.slice(1);
+
+        // --- MONTA HTML DO MODAL ---
+        var html = '<div class="row">';
+
+        // -------------------------------------------------
+        // COLUNA ESQUERDA: SPRITES, TIPOS, ALTURA, PESO, HABILIDADES
+        // -------------------------------------------------
+        html += '<div class="col-md-6">';
+
+        // Sprites
         html += '<div class="sprite-container">';
-        html += '<div><img src="' + jsonResposta.sprites.front_default + '" alt="front"><p class="text-center">Normal</p></div>';
-        html += '<div><img src="' + jsonResposta.sprites.front_shiny + '" alt="shiny"><p class="text-center">Shiny</p></div>';
+        html += '<div><img src="' + pokemonJson.sprites.front_default + '" alt="front"><p class="text-center">Normal</p></div>';
+        html += '<div><img src="' + pokemonJson.sprites.front_shiny + '" alt="shiny"><p class="text-center">Shiny</p></div>';
         html += '</div>';
-        
+
+        // Tipos
         html += '<p><strong>Tipo:</strong> ';
-        for(var loop = 0; loop < jsonResposta.types.length; loop++) {
-            html += '<span class="badge type-' + jsonResposta.types[loop].type.name + '">' + jsonResposta.types[loop].type.name + '</span> ';
+        for (var t = 0; t < pokemonJson.types.length; t++) {
+            var tipo = pokemonJson.types[t].type.name;
+            html += '<span class="badge type-' + tipo + '">' + tipo + '</span> ';
         }
         html += '</p>';
-        
-        html += '<p><strong>Altura:</strong> ' + (jsonResposta.height / 10) + ' m</p>';
-        html += '<p><strong>Peso:</strong> ' + (jsonResposta.weight / 10) + ' kg</p>';
-        
+
+        // Altura e peso
+        html += '<p><strong>Altura:</strong> ' + (pokemonJson.height / 10) + ' m</p>';
+        html += '<p><strong>Peso:</strong> ' + (pokemonJson.weight / 10) + ' kg</p>';
+
+        // Habilidades
         html += '<p><strong>Habilidades:</strong> ';
-        for(var loop = 0; loop < jsonResposta.abilities.length; loop++) {
-            html += jsonResposta.abilities[loop].ability.name;
-            if(loop < jsonResposta.abilities.length - 1) html += ', ';
+        for (var h = 0; h < pokemonJson.abilities.length; h++) {
+            html += pokemonJson.abilities[h].ability.name;
+            if (h < pokemonJson.abilities.length - 1) {
+                html += ', ';
+            }
         }
         html += '</p>';
-        
-        html += '</div><div class="col-md-6">';
-        
+
+        html += '</div>'; // fim coluna esquerda
+
+        // -------------------------------------------------
+        // COLUNA DIREITA: DESCRIÇÃO + STATS
+        // -------------------------------------------------
+        html += '<div class="col-md-6">';
+
+        // Descrição
         html += '<p><strong>Descrição:</strong></p>';
         html += '<p>' + descricao.replace(/\f/g, ' ') + '</p>';
-        
+
+        // Stats
         html += '<h6>Estatísticas:</h6>';
-        for(var loop = 0; loop < jsonResposta.stats.length; loop++) {
-            var statusPokemon = jsonResposta.stats[loop];
-            var percentage = (statusPokemon.base_stat / 255) * 100;
-            html += '<div><small>' + statusPokemon.stat.name + ': ' + statusPokemon.base_stat + '</small>';
-            html += '<div class="stat-bar"><div class="stat-fill" style="width: ' + percentage + '%"></div></div></div>';
+        for (var s = 0; s < pokemonJson.stats.length; s++) {
+            var stat = pokemonJson.stats[s];
+            var porcentagem = (stat.base_stat / 255) * 100;
+
+            html += '<div><small>' + stat.stat.name + ': ' + stat.base_stat + '</small>';
+            html += '<div class="stat-bar">';
+            html += '<div class="stat-fill" style="width: ' + porcentagem + '%"></div>';
+            html += '</div></div>';
         }
-        
-        html += '</div></div>';
-        
+
+        html += '</div>'; // fim coluna direita
+        html += '</div>'; // fim row
+
+        // --- APLICA HTML NO MODAL ---
         document.getElementById('modalBody').innerHTML = html;
-        
-        var mod = new bootstrap.Modal(document.getElementById('m'));
-        mod.show();
-        
-    } catch(error) {
-        console.log('erro');
+
+        // --- ABRE MODAL ---
+        var modal = new bootstrap.Modal(document.getElementById('m'));
+        modal.show();
+
+    } catch (error) {
+        console.log('erro ao carregar detalhes:', error);
         alert('Erro ao carregar detalhes!');
     }
 }
+
 
 window.onload = function() {
     iniciarPagina();
