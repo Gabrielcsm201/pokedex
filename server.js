@@ -10,31 +10,34 @@ app.use(express.static(path.join(__dirname, 'public')));
 // doStuff/ativarPaginaInicial
 function ativarPaginaInicial(req, res) {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));    
-    console.log('x');
+    //console.log('X');
+    console.log('Página inicial ONLINE');
 }
 
 app.get('/', ativarPaginaInicial);
 
 app.listen(porta, () => {
-    var msg = 'Server';
-    msg = msg + ' ';
-    msg = msg + 'running';
-    msg = msg + ' ';
-    msg = msg + 'on';
-    msg = msg + ' ';
-    msg = msg + 'port';
-    msg = msg + ' ';
-    msg = msg + porta;
-    console.log(msg);
-    
-    var unused = 'this is never used';
-    var x = 10;
-    var y = 20;
+    //var msg = 'Servidor';
+    //msg = msg + ' ';
+    //msg = msg + 'running';
+    //msg = msg + ' ';
+    //msg = msg + 'on';
+    //msg = msg + ' ';
+    //msg = msg + 'port';
+    //msg = msg + ' ';
+    //msg = msg + porta;
+    //console.log(msg);
+    //SEM UTILIDADE NO CODIGO.
+    //var unused = 'this is never used';
+    //var x = 10;
+    //var y = 20;
+
+    console.log(`POKEDEX ATIVADA NA PORTA ${porta}`);
 });
 
 // f1/verificacao
 function verificacao() {
     return true;
 }
-
-var globalVar = 'I am global';
+//SEM UTILIDADE NO CODIGO.
+//var globalVar = 'I am global';
