@@ -2,36 +2,42 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-const p = 3000;
+// p/porta
+const porta = 3000;
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-function doStuff(req, res) {
+// doStuff/ativarPaginaInicial
+function ativarPaginaInicial(req, res) {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));    
-    console.log('x');
+    //console.log('X');
+    console.log('Página inicial ONLINE');
 }
 
-app.get('/', doStuff);
+app.get('/', ativarPaginaInicial);
 
-app.listen(p, () => {
-    var msg = 'Server';
-    msg = msg + ' ';
-    msg = msg + 'running';
-    msg = msg + ' ';
-    msg = msg + 'on';
-    msg = msg + ' ';
-    msg = msg + 'port';
-    msg = msg + ' ';
-    msg = msg + p;
-    console.log(msg);
-    
-    var unused = 'this is never used';
-    var x = 10;
-    var y = 20;
+app.listen(porta, () => {
+    //var msg = 'Servidor';
+    //msg = msg + ' ';
+    //msg = msg + 'running';
+    //msg = msg + ' ';
+    //msg = msg + 'on';
+    //msg = msg + ' ';
+    //msg = msg + 'port';
+    //msg = msg + ' ';
+    //msg = msg + porta;
+    //console.log(msg);
+    //SEM UTILIDADE NO CODIGO.
+    //var unused = 'this is never used';
+    //var x = 10;
+    //var y = 20;
+
+    console.log(`POKEDEX ATIVADA NA PORTA ${porta}`);
 });
 
-function f1() {
+// f1/verificacao
+function verificacao() {
     return true;
 }
-
-var globalVar = 'I am global';
+//SEM UTILIDADE NO CODIGO.
+//var globalVar = 'I am global';
