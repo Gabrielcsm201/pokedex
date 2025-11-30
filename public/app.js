@@ -95,49 +95,70 @@ async function carregarFiltroTipo() {
 }
 
 function UNIFOR() {
-    var matrispokemon = document.getElementById('pokemonGrid');
-    matrispokemon.innerHTML = '';
 
-    var listapokemon = listaVazia;
-    if(filtroNome !== '') {
-        listapokemon = listapokemon.filter(pokemon => {
-            return pokemon.name.toLowerCase().includes(filtroNome.toLowerCase()) ||
+    var grid = document.getElementById('pokemonGrid');
+    grid.innerHTML = '';
+
+    var lista = listaVazia;
+
+    // ---- FILTRO POR NOME OU ID ----
+    if (filtroNome !== '') {
+        var termo = filtroNome.toLowerCase();
+        lista = lista.filter(function(pokemon) {
+            return pokemon.name.toLowerCase().includes(termo) ||
                    pokemon.id.toString().includes(filtroNome);
         });
     }
 
-    for(var loop = 0; loop < listapokemon.length; loop++) {
-        var pokemon = listapokemon[loop];
-        var forDivPokemonn = document.createElement('div');
-        forDivPokemonn.className = 'col-md-3';
-        
-        var html = '<div class="c" onclick="DetalhesPokemon(' + pokemon.id + ')">';
-        html = html + '<img src="' + pokemon.sprites.front_default + '" class="i" alt="' + pokemon.name + '">';
-        html = html + '<h5 class="text-center">#' + pokemon.id + ' ' + pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1) + '</h5>';
-        html = html + '<div class="text-center">';
-        
-        for(var loop2 = 0; loop2 < pokemon.types.length; loop2++) {
-            var typeName = pokemon.types[loop2].type.name;
-            html = html + '<span class="badge type-' + typeName + '">' + typeName + '</span> ';
+    // ---- RENDERIZAÇÃO DOS CARDS ----
+    for (var i = 0; i < lista.length; i++) {
+        var pokemon = lista[i];
+
+        var coluna = document.createElement('div');
+        coluna.className = 'col-md-3';
+
+        var htmlCard = '<div class="c" onclick="DetalhesPokemon(' + pokemon.id + ')">';
+
+        // imagem do pokemon
+        htmlCard += '<img src="' + pokemon.sprites.front_default + '" class="i" alt="' + pokemon.name + '">';
+
+        // título
+        htmlCard += '<h5 class="text-center">#' + pokemon.id + ' ' +
+            pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1) +
+            '</h5>';
+
+        // tipos
+        htmlCard += '<div class="text-center">';
+        for (var t = 0; t < pokemon.types.length; t++) {
+            var tipo = pokemon.types[t].type.name;
+            htmlCard += '<span class="badge type-' + tipo + '">' + tipo + '</span> ';
         }
-        
-        html = html + '</div></div>';
-        forDivPokemonn.innerHTML = html;
-        matrispokemon.appendChild(forDivPokemonn);
+        htmlCard += '</div>';
+
+        htmlCard += '</div>'; // fim card
+
+        coluna.innerHTML = htmlCard;
+        grid.appendChild(coluna);
     }
-    
+
+    // ---- MOSTRA/ESCONDE ELEMENTOS ----
     document.getElementById('loading').style.display = 'none';
     document.getElementById('pokemonGrid').style.display = 'flex';
 
-    if(filtroTipo !== '') {
-        document.getElementById('pageInfo').textContent = 'Mostrando ' + listapokemon.length + ' pokémons';
+    // ---- INFORMAÇÃO DE PÁGINA ----
+    var pageInfo = document.getElementById('pageInfo');
+
+    if (filtroTipo !== '') {
+        pageInfo.textContent = 'Mostrando ' + lista.length + ' pokémons';
     } else {
-        document.getElementById('pageInfo').textContent = 'Página ' + paginaAtual;
+        pageInfo.textContent = 'Página ' + paginaAtual;
     }
 
+    // ---- BOTÕES DE PAGINAÇÃO ----
     document.getElementById('prevBtn').disabled = paginaAtual === 1 || filtroTipo !== '';
     document.getElementById('nextBtn').disabled = filtroTipo !== '';
 }
+
 
 // f/adicionarFiltros
 async function adicionarFiltros() {
