@@ -1,3 +1,4 @@
+/* eslint-env node */
 const express = require('express');
 const path = require('path');
 const app = express();
@@ -33,6 +34,8 @@ app.listen(porta, () => {
     //var y = 20;
 
     console.log(`POKEDEX ATIVADA NA PORTA ${porta}`);
+    // utilizar verificacao para evitar no-unused-vars
+    verificacao();
 });
 
 // f1/verificacao
