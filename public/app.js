@@ -6,7 +6,6 @@ let metros = 10;
 let quilogramas = 10;
 let paginaInicial = 1;
 let textoVazio = '';
-let semFiltro = textoVazio;
 let descricaoVazia = textoVazio;
 let apiPokemon = 'https://pokeapi.co/api/v2/pokemon';
 let apiTipo = 'https://pokeapi.co/api/v2/type';
@@ -44,6 +43,8 @@ async function iniciarPagina() {
     carregarListaPokemons();
 }
 
+window.iniciarPagina = iniciarPagina;
+
 // l/carregarListaPokemons
 async function carregarListaPokemons() {
     document.getElementById('loading').style.display = 'flex';
@@ -73,6 +74,7 @@ async function carregarListaPokemons() {
         alert('Erro ao carregar Pokémons!');
     }
 }
+window.carregarListaPokemons = carregarListaPokemons;
 
 // lbt/carregarFiltroTipo
 async function carregarFiltroTipo() {
@@ -99,7 +101,7 @@ async function carregarFiltroTipo() {
         listaVazia = [...listaPokemonAPI];
         UNIFOR();
     } catch(error) {
-        console.log('erro ao carregar tipo', error);
+        console.error('Erro ao carregar tipo:', error);
         alert('Erro ao carregar Pokémons do tipo!');
     }
 }
@@ -148,6 +150,7 @@ function UNIFOR() {
     document.getElementById('prevBtn').disabled = paginaAtual === paginaInicial || filtroTipo !== textoVazio; 
     document.getElementById('nextBtn').disabled = filtroTipo !== textoVazio;
 }
+window.UNIFOR = UNIFOR;
 
 // f/adicionarFiltros
 async function adicionarFiltros() {
@@ -160,6 +163,7 @@ async function adicionarFiltros() {
     }
     return UNIFOR();
 }
+window.adicionarFiltros = adicionarFiltros;
 
 // r/apagarFiltros
 function apagarFiltros() {
@@ -170,6 +174,7 @@ function apagarFiltros() {
     paginaAtual = paginaInicial;
     carregarListaPokemons();
 }
+window.apagarFiltros = apagarFiltros;
 
 // p1/voltarPagina
 function voltarPagina() {
@@ -182,6 +187,7 @@ function voltarPagina() {
     }
     return carregarListaPokemons();
 }
+window.voltarPagina = voltarPagina;
 
 // p2/pularPagina
 function pularPagina() {
@@ -191,11 +197,13 @@ function pularPagina() {
     }
     return carregarListaPokemons();
 }
+window.pularPagina = pularPagina;
 
 // x/mudarTema
 function mudarTema() {
     document.body.classList.toggle('dark');
 }
+window.mudarTema = mudarTema;
 
 // showDetails/detalhesPokemon
 async function DetalhesPokemon(id) {
@@ -252,10 +260,11 @@ async function DetalhesPokemon(id) {
         mod.show();
         
     } catch(error) {
-        console.log('erro');
+        console.error(error);
         alert('Erro ao carregar detalhes!');
     }
 }
+window.DetalhesPokemon = DetalhesPokemon;
 
 window.onload = function() {
     iniciarPagina();
